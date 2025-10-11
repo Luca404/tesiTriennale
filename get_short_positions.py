@@ -67,7 +67,7 @@ def get_short_interest(tickers):
         #unisco tutti ticker
         df_all = pd.concat(all_data, ignore_index=True)
         # Salvo in csv
-        df_all.to_csv(DATA_PATH / f"{INDEX}_short_interest.csv", index=False)
+        df_all.to_csv(DATA_PATH / "all_short_interest.csv", index=False)
 
     else:
         print("Nessun dato trovato per i tickers")
@@ -75,14 +75,15 @@ def get_short_interest(tickers):
 
 #salvo percorso assoluto del file
 PATH = Path(__file__).parent
-DATA_PATH = PATH / "data"
-INDEX_PATH = PATH/".."/"indexes"
+INDEX = "R3000"
+DATA_PATH = PATH / "data" / f"data{INDEX}"
 
-INDEX = "MS8"
 
 if __name__ == "__main__":
     #carico tutti i tickers
-    tickers = pd.read_csv( INDEX_PATH/f"{INDEX}.csv", usecols=["Ticker"] ).iloc[:, 0].dropna().unique().tolist()
+    file_name = "all_tickers.csv"
+    tickers = pd.read_csv( DATA_PATH/file_name, usecols=["ticker"] ).iloc[:, 0].dropna().unique().tolist()
+    tickers = tickers[:100]
 
     get_short_interest( tickers )
     
