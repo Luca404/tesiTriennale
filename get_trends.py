@@ -2,6 +2,8 @@ from pathlib import Path
 import pandas as pd
 from pytrends.request import TrendReq
 import time
+import warnings
+warnings.simplefilter("ignore", FutureWarning)
 
 
 def get_google_trends(tickers, tf):
@@ -14,6 +16,7 @@ def get_google_trends(tickers, tf):
             interest = pytrends.interest_over_time().infer_objects(copy=False)
             
             if not interest.empty:
+                print( f"Scaricato {ticker}" )
                 interest = interest[[ticker]]
                 data.append(interest)
             
@@ -25,21 +28,21 @@ def get_google_trends(tickers, tf):
     #se ci sono dati concateno e salvo
     if data:
         df = pd.concat(data, axis=1)
-        df.to_csv(DATA_PATH/f"{INDEX}_trends.csv")
+        df.to_csv(DATA_PATH/"all_trends.csv")
         print("Salvataggio completato")
     else:
         print("Nessun dato disponibile")
 
 
 PATH = Path(__file__).parent
-DATA_PATH = PATH/"data"
-INDEX_PATH = PATH/".."/"indexes"
+INDEX = "R3000"
+DATA_PATH = PATH/"data"/f"data{INDEX}"
 
-INDEX = "MS8"
 
 if __name__ == "__main__":
     #carico i tickers
-    tickers = pd.read_csv( INDEX_PATH/f"{INDEX}.csv", usecols=["Ticker"] ).iloc[:, 0].dropna().unique().tolist()
+    file_name = "all_tickers.csv"
+    tickers = pd.read_csv( DATA_PATH/file_name, usecols=["ticker"] ).iloc[:, 0].dropna().unique().tolist()
 
     timeframe = "today 5-y"
     get_google_trends(tickers, timeframe)
