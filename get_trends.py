@@ -32,7 +32,7 @@ def get_google_trends(tickers, tf, output_name="all_trends_W.csv"):
         except Exception as e:
             print(f"Errore con {ticker}: {e}")
         
-        time.sleep(5)  #rispetta i limiti di Google
+        time.sleep(3)  #rispetta i limiti di Google
 
     #se ci sono dati concateno e salvo
     if data:
@@ -58,4 +58,6 @@ if __name__ == "__main__":
     tickers = pd.read_csv( DATA_PATH/file_name, usecols=["ticker"] ).iloc[:, 0].dropna().unique().tolist()
 
     timeframe = "today 5-y"
+
+    tickers = tickers[:200]
     get_google_trends(tickers, timeframe)

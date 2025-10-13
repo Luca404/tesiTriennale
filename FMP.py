@@ -56,7 +56,7 @@ def get_mkt_cap( tickers, pause, output_name="all_mktcap_D.csv" ):
             final_df.to_csv(output_path, mode='a', header=False, index=False)
         else:
             final_df.to_csv(output_path, index=False)
-        print(f"Dati salvati correttamente")
+        print("Dati salvati correttamente")
     else:
         print("Nessun dato da salvare.")
 
@@ -102,7 +102,7 @@ def get_prices( tickers, pause, output_name="all_prices_D.csv" ):
             final_df.to_csv(output_path, mode='a', header=False, index=False)
         else:
             final_df.to_csv(output_path, index=False)
-        print(f"Dati salvati correttamente")
+        print("Dati salvati correttamente")
     else:
         print("Nessun dato da salvare.")
 
@@ -120,55 +120,69 @@ def get_news_weekly_counts(tickers, pause, start_date="2020-01-01", output_name=
     remaining_tickers = [t for t in tickers if t not in old_tickers]
 
     #finestra temporale
-    start = pd.to_datetime(start_date).strftime("%Y-%m-%d")
+    start = pd.to_datetime(start_date)
     today = datetime.today().strftime("%Y-%m-%d")
 
+    all_data = []
     for ticker in remaining_tickers:
         api_ticker = ticker.replace(".", "-") #sostituisco eventuali punti
         url = f"{BASE_URL}/stock_news"
 
+        data = []
         #scorro tutte le pagine
         page = 0
         while(True):
             params = {
                 "tickers": api_ticker,
-                "from": start,
+                "from": start.strftime("%Y-%m-%d"),
                 "to": today,
                 "page": page,
                 "apikey": API_KEY
             }
-            try:
-                r = requests.get(url, params)
-                r.raise_for_status()
-                data = r.json()
-                if not data:  # se non ci sono dati, skip
-                    print(f"Nessun dato per {ticker}")
+
+            r = requests.get(url, params)
+            r.raise_for_status()
+            page_data = r.json()
+
+            if not page_data or len(page_data) == 0:  #se la pagina è vuota, stop
+                break
+
+            for item in page_data:
+                date = item.get("publishedDate")
+                if not date:
                     continue
-                df = pd.DataFrame(data)
-                df["publishedDate"] = pd.to_datetime(df["publishedDate"])
-                weekly = (
-                    df.set_index("publishedDate")
-                    .resample("W-SUN")
-                    .size()
-                    .rename("news_count")
-                    .reset_index()
-                    .rename(columns={"publishedDate": "date"})
-                )
+                date_time = pd.to_datetime(date, errors="coerce")
+                if pd.notna(date_time) and date_time >= start:
+                    data.append(item)
+            
+            page += 1
+            time.sleep(pause)
 
-                print(df)
-                print(weekly)
+        if not data:
+            print(f"Nessun dato per {ticker}")
+        else:
+            df = pd.DataFrame(data)[["symbol", "publishedDate", "title", "text", "site"]]
+            df = df.rename(columns={"symbol": "ticker", "publishedDate": "date"})
+            #rimuovo caratteri fastidiosi
+            for col in ["text", "title"]:
+                if col in df.columns:
+                    df[col] = df[col].astype(str).str.replace(r"[\r\n\t]+", " ", regex=True).str.strip()
 
-                time.sleep(1000)
+            all_data.append(df)
+            print(f"Scaricati dati per {ticker}")
+    
+    if all_data:
+        final_df = pd.concat(all_data, ignore_index=True)
 
-            except Exception as e:
-                print(f"Errore per {ticker}: {e}")
-        
-        time.sleep(pause)
 
-
-    print(f"Dati news settimanali aggiornati in {output_path}.")
-    return remaining_tickers
-
+        if old_tickers:
+            final_df.to_csv(output_path, mode='a', header=False, index=False)
+        else:
+            final_df.to_csv(output_path, index=False)
+        print("Dati salvati correttamente")
+    
+    else:
+        print("Nessun dato da salvare")
 
 
 INDEX = "R3000"
@@ -188,5 +202,6 @@ if __name__ == "__main__":
 
     #get_prices( tickers, pause )
 
+    tickers = tickers[:100]
     get_news_weekly_counts( tickers, pause )
 
