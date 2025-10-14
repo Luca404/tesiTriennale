@@ -107,7 +107,7 @@ def get_prices( tickers, pause, output_name="all_prices_D.csv" ):
         print("Nessun dato da salvare.")
 
 
-def get_news_weekly_counts(tickers, pause, start_date="2020-01-01", output_name="all_news_volume.csv"):
+def get_news(tickers, pause, start_date="2020-01-01", output_name="all_news.csv"):
    
     output_path = DATA_PATH / output_name
 
@@ -202,6 +202,6 @@ if __name__ == "__main__":
 
     #get_prices( tickers, pause )
 
-    tickers = tickers[:100]
-    get_news_weekly_counts( tickers, pause )
+    tickers = tickers[:10]
+    get_news( tickers, pause )
 

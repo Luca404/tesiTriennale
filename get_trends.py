@@ -32,7 +32,7 @@ def get_google_trends(tickers, tf, output_name="all_trends_W.csv"):
         except Exception as e:
             print(f"Errore con {ticker}: {e}")
         
-        time.sleep(3)  #rispetta i limiti di Google
+        time.sleep(60)  #rispetta i limiti di Google
 
     #se ci sono dati concateno e salvo
     if data:
