@@ -174,7 +174,6 @@ def get_news(tickers, pause, start_date="2020-01-01", output_name="all_news.csv"
     if all_data:
         final_df = pd.concat(all_data, ignore_index=True)
 
-
         if old_tickers:
             final_df.to_csv(output_path, mode='a', header=False, index=False)
         else:
