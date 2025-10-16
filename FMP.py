@@ -192,7 +192,7 @@ BASE_URL = "https://financialmodelingprep.com/api/v3"
 
 if __name__ == "__main__":
 
-    tickers_file_path = DATA_PATH / "all_tickers.csv"
+    tickers_file_path = DATA_PATH / "all_tickers_filtered.csv"
     tickers = pd.read_csv(tickers_file_path)["ticker"].dropna().unique().tolist()
     
     pause = 60 / 300     #max 300 richieste al minuto
@@ -200,7 +200,6 @@ if __name__ == "__main__":
     #get_mkt_cap( tickers, pause )
 
     #get_prices( tickers, pause )
-
-    tickers = tickers[:10]
+    
     get_news( tickers, pause )
 
