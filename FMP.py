@@ -184,6 +184,51 @@ def get_news(tickers, pause, start_date="2020-01-01", output_name="all_news.csv"
         print("Nessun dato da salvare")
 
 
+def get_company_names( tickers, pause, output_name="company_names.csv" ):
+    
+    output_path = DATA_PATH / output_name
+
+    #carico tickers già scaricati
+    old_tickers = []
+    if output_path.is_file():
+        existing_data = pd.read_csv(output_path)
+        old_tickers = existing_data["ticker"].dropna().unique().tolist()
+
+    remaining_tickers = [t for t in tickers if t not in old_tickers]
+    
+    all_data = []
+    for ticker in remaining_tickers:
+        api_ticker = ticker.replace(".", "-") #sostituisco eventuali punti
+        url = f"{BASE_URL}/profile/{api_ticker}"
+        params = { "apikey": API_KEY }
+        
+        try:
+            r = requests.get( url, params=params )
+            r.raise_for_status()
+            data = r.json()
+            if not data:  # se non ci sono dati, skip
+                print(f"Nessun dato per {ticker}")
+                continue
+            all_data.append( {"ticker":ticker, "name":data[0]["companyName"]} )
+            print(f"Scaricati dati per {ticker}")
+            
+        except Exception as e:
+            print(f"Errore per {ticker}: {e}")
+        
+        time.sleep( pause )
+        
+    if all_data:
+        final_df = pd.DataFrame(all_data)
+        if old_tickers:
+            final_df.to_csv(output_path, mode='a', header=False, index=False)
+        else:
+            final_df.to_csv(output_path, index=False)
+        print("Dati salvati correttamente")
+    else:
+        print("Nessun dato da salvare.")
+            
+    
+
 INDEX = "R3000"
 YEAR = "23-24"
 DATA_PATH = PATH/"data"/f"data{INDEX}"
@@ -201,5 +246,7 @@ if __name__ == "__main__":
 
     #get_prices( tickers, pause )
     
-    get_news( tickers, pause )
+    #get_news( tickers, pause )
+    
+    get_company_names( tickers, pause )
 

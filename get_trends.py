@@ -66,7 +66,7 @@ def get_google_trends(tickers, tf, output_name="all_trends_W.csv"):
             else:
                 print(f"Errore con {ticker}: {e}")
                 
-        delay = random.uniform(30, 40)
+        delay = random.uniform(30, 60)
         time.sleep(delay)  #rispetta i limiti di Google
 
 INDEX = "R3000"
