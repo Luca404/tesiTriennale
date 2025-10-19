@@ -7,7 +7,7 @@ from urllib.parse import quote
 PATH = Path(__file__).parent
 
 
-def get_wiki_views( df, start_date="20200101", output_name="wiki_views.csv" ):
+def get_wiki_views( df, start_date="20200101", output_name="wiki_views_D.csv" ):
     base_url = "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/all-agents"
     headers = {"User-Agent": "Luca Botta-Thesis/1.0 (contact: luca.botta44@gmail.com)"}
     
@@ -23,7 +23,7 @@ def get_wiki_views( df, start_date="20200101", output_name="wiki_views.csv" ):
     data = []
     for ticker in remaining_tickers:
         name = df[ df["ticker"] == ticker ]["name"].to_string(index=False)
-        url = f"{base_url}/{quote(name, safe='')}/daily/{start_date}/{"20251010"}"
+        url = f"{base_url}/{quote(name, safe='')}/daily/{start_date}/{'20251010'}"
         
         try:
             resp = requests.get(url, headers=headers, timeout=30)
@@ -55,12 +55,12 @@ def get_wiki_views( df, start_date="20200101", output_name="wiki_views.csv" ):
     else:
         print("Nessun dato da salvare.")
 
-INDEX = "R3000"
-DATA_PATH = PATH/"data"/f"data{INDEX}"
+INDEX = "MS50"
+DATA_PATH = PATH/"data"/INDEX
 
 if __name__ == "__main__":
-    df = pd.read_csv( DATA_PATH / "company_names.csv" )
+    df = pd.read_csv( DATA_PATH / "tickers.csv" )
     df["ticker"] = df["ticker"].astype(str).str.upper().str.strip()
     df["name"] = df["name"].astype(str).str.strip()
-    
+
     get_wiki_views( df )

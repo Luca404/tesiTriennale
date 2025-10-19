@@ -14,7 +14,7 @@ load_dotenv( PATH / "keys.env" )
 API_KEY = os.getenv( "API_KEY_FMP_PREMIUM" )
 
 #scarico market cap giornaliera di tutti i (tickers)
-def get_mkt_cap( tickers, pause, output_name="all_mktcap_D.csv" ):
+def get_mkt_cap( tickers, pause, output_name="mktcap_D.csv" ):
     output_path = DATA_PATH/output_name
 
     #carico tickers già scaricati
@@ -61,7 +61,7 @@ def get_mkt_cap( tickers, pause, output_name="all_mktcap_D.csv" ):
         print("Nessun dato da salvare.")
 
 #scarico prezzi giornalieri di tutti i (tickers)
-def get_prices( tickers, pause, output_name="all_prices_D.csv" ):
+def get_prices( tickers, pause, output_name="prices_D.csv" ):
     output_path = DATA_PATH/output_name
 
     #carico tickers già scaricati
@@ -107,7 +107,7 @@ def get_prices( tickers, pause, output_name="all_prices_D.csv" ):
         print("Nessun dato da salvare.")
 
 
-def get_news(tickers, pause, start_date="2020-01-01", output_name="all_news.csv"):
+def get_news(tickers, pause, start_date="2020-01-01", output_name="news_D.csv"):
    
     output_path = DATA_PATH / output_name
 
@@ -123,7 +123,7 @@ def get_news(tickers, pause, start_date="2020-01-01", output_name="all_news.csv"
     start = pd.to_datetime(start_date)
     today = datetime.today().strftime("%Y-%m-%d")
 
-    all_data = []
+    i = 0
     for ticker in remaining_tickers:
         api_ticker = ticker.replace(".", "-") #sostituisco eventuali punti
         url = f"{BASE_URL}/stock_news"
@@ -131,6 +131,7 @@ def get_news(tickers, pause, start_date="2020-01-01", output_name="all_news.csv"
         data = []
         #scorro tutte le pagine
         page = 0
+        print(f"Scaricando dati per {ticker}...")
         while(True):
             params = {
                 "tickers": api_ticker,
@@ -167,21 +168,13 @@ def get_news(tickers, pause, start_date="2020-01-01", output_name="all_news.csv"
             for col in ["text", "title"]:
                 if col in df.columns:
                     df[col] = df[col].astype(str).str.replace(r"[\r\n\t]+", " ", regex=True).str.strip()
-
-            all_data.append(df)
             print(f"Scaricati dati per {ticker}")
-    
-    if all_data:
-        final_df = pd.concat(all_data, ignore_index=True)
+            if old_tickers or i != 0:
+                df.to_csv(output_path, mode="a", header=False, index=False )
+            else:
+                df.to_csv(output_path, index=False )
 
-        if old_tickers:
-            final_df.to_csv(output_path, mode='a', header=False, index=False)
-        else:
-            final_df.to_csv(output_path, index=False)
-        print("Dati salvati correttamente")
-    
-    else:
-        print("Nessun dato da salvare")
+            i+=1
 
 
 def get_company_names( tickers, pause, output_name="company_names.csv" ):
@@ -229,24 +222,29 @@ def get_company_names( tickers, pause, output_name="company_names.csv" ):
             
     
 
-INDEX = "R3000"
-YEAR = "23-24"
-DATA_PATH = PATH/"data"/f"data{INDEX}"
+INDEX = "MS50"
+DATA_PATH = PATH/"data"/INDEX
 
 BASE_URL = "https://financialmodelingprep.com/api/v3"
 
 if __name__ == "__main__":
 
-    tickers_file_path = DATA_PATH / "all_tickers_filtered.csv"
+    tickers_file_path = DATA_PATH / "tickers.csv"
     tickers = pd.read_csv(tickers_file_path)["ticker"].dropna().unique().tolist()
-    
+
+    news_tickers = pd.read_csv( PATH/"data"/"R3000"/"news_volume_D.csv" )["ticker"].dropna().unique().tolist()
+
+    tickers = [t for t in tickers if t not in news_tickers]
+
+    print(tickers)
+
     pause = 60 / 300     #max 300 richieste al minuto
 
     #get_mkt_cap( tickers, pause )
 
     #get_prices( tickers, pause )
     
-    #get_news( tickers, pause )
+    get_news( tickers, pause )
     
-    get_company_names( tickers, pause )
+    #get_company_names( tickers, pause )
 
