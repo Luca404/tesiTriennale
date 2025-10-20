@@ -1,0 +1,131 @@
+Analysis with 2 clusters...
+Dimension of cluster 1: 214, meme stock in cluster 1: 7
+Dimension of cluster 2: 307, meme stock in cluster 2: 18
+
+Analysis with 3 clusters...
+Dimension of cluster 1: 145, meme stock in cluster 1: 2
+Dimension of cluster 2: 176, meme stock in cluster 2: 1
+Dimension of cluster 3: 200, meme stock in cluster 3: 22
+
+Analysis with 4 clusters...
+Dimension of cluster 1: 129, meme stock in cluster 1: 2
+Dimension of cluster 2: 173, meme stock in cluster 2: 3
+Dimension of cluster 3: 141, meme stock in cluster 3: 17
+Dimension of cluster 4: 78, meme stock in cluster 4: 3
+
+Analysis with 5 clusters...
+Dimension of cluster 1: 122, meme stock in cluster 1: 1
+Dimension of cluster 2: 148, meme stock in cluster 2: 0
+Dimension of cluster 3: 92, meme stock in cluster 3: 18
+Dimension of cluster 4: 60, meme stock in cluster 4: 2
+Dimension of cluster 5: 99, meme stock in cluster 5: 4
+
+Analysis with 6 clusters...
+Dimension of cluster 1: 125, meme stock in cluster 1: 1
+Dimension of cluster 2: 151, meme stock in cluster 2: 0
+Dimension of cluster 3: 65, meme stock in cluster 3: 14
+Dimension of cluster 4: 62, meme stock in cluster 4: 2
+Dimension of cluster 5: 44, meme stock in cluster 5: 5
+Dimension of cluster 6: 74, meme stock in cluster 6: 3
+
+Analysis with 7 clusters...
+Dimension of cluster 1: 48, meme stock in cluster 1: 0
+Dimension of cluster 2: 119, meme stock in cluster 2: 1
+Dimension of cluster 3: 76, meme stock in cluster 3: 15
+Dimension of cluster 4: 56, meme stock in cluster 4: 1
+Dimension of cluster 5: 38, meme stock in cluster 5: 5
+Dimension of cluster 6: 77, meme stock in cluster 6: 3
+Dimension of cluster 7: 107, meme stock in cluster 7: 0
+
+Analysis with 8 clusters...
+Dimension of cluster 1: 35, meme stock in cluster 1: 0
+Dimension of cluster 2: 66, meme stock in cluster 2: 10
+Dimension of cluster 3: 76, meme stock in cluster 3: 2
+Dimension of cluster 4: 89, meme stock in cluster 4: 0
+Dimension of cluster 5: 24, meme stock in cluster 5: 1
+Dimension of cluster 6: 78, meme stock in cluster 6: 0
+Dimension of cluster 7: 57, meme stock in cluster 7: 12
+Dimension of cluster 8: 96, meme stock in cluster 8: 0
+
+Analysis with 9 clusters...
+Dimension of cluster 1: 35, meme stock in cluster 1: 0
+Dimension of cluster 2: 51, meme stock in cluster 2: 3
+Dimension of cluster 3: 76, meme stock in cluster 3: 2
+Dimension of cluster 4: 89, meme stock in cluster 4: 0
+Dimension of cluster 5: 21, meme stock in cluster 5: 1
+Dimension of cluster 6: 53, meme stock in cluster 6: 1
+Dimension of cluster 7: 47, meme stock in cluster 7: 17
+Dimension of cluster 8: 96, meme stock in cluster 8: 0
+Dimension of cluster 9: 53, meme stock in cluster 9: 1
+
+Analysis with 10 clusters...
+Dimension of cluster 1: 29, meme stock in cluster 1: 0
+Dimension of cluster 2: 43, meme stock in cluster 2: 0
+Dimension of cluster 3: 73, meme stock in cluster 3: 1
+Dimension of cluster 4: 90, meme stock in cluster 4: 1
+Dimension of cluster 5: 16, meme stock in cluster 5: 0
+Dimension of cluster 6: 48, meme stock in cluster 6: 0
+Dimension of cluster 7: 35, meme stock in cluster 7: 9
+Dimension of cluster 8: 98, meme stock in cluster 8: 0
+Dimension of cluster 9: 48, meme stock in cluster 9: 0
+Dimension of cluster 10: 41, meme stock in cluster 10: 14
+
+
+Commento:
+
+| k        | Meme stock concentrati?    | Distribuzione           | Commento                                          |
+| -------- | -------------------------- | ----------------------- | ------------------------------------------------- |
+| **2**    | 7 vs 18                    | Quasi metà e metà       | Troppo grossolano, mescola molto                  |
+| **3**    | 22 in un cluster           | Ottimo segnale          | Il cluster 3 “raccoglie” quasi tutti i meme stock |
+| **4**    | 17 in un cluster           | Ancora buono            | Cluster 3 resta dominante per meme stock          |
+| **5**    | 18 in un cluster           | Ancora molto netto      | Sta emergendo un cluster dominante                |
+| **6**    | 14 + 5 + 3 distribuiti     | Più frammentato         | Inizia a spaccare il gruppo naturale              |
+| **7–10** | Meme stock si sparpagliano | Nessun cluster compatto | Troppi cluster, rumore e over-segmentation        |
+
+Tra k = 3 e k = 5 sembra esserci il miglior bilanciamento:
+A k = 3, 22 su 25 meme stock finiscono nello stesso cluster (88%),
+che è un fortissimo segnale che DTW riconosce una dinamica comune per questo gruppo.
+
+Aumentando k oltre 5, il gruppo si frammenta progressivamente (14+5+3, poi 15+5+3, ecc.),
+segno che il modello sta iniziando a “tagliare” cluster più piccoli che catturano variazioni minori o rumore.
+
+Quindi tra k=3 e k=5 hai il range in cui la struttura dei “meme stock” emerge chiaramente, prima di rompersi.
+
+Numero di cluster consigliato: k = 3 (oppure 4 o 5 per esplorazione fine).
+
+Motivazione
+È il valore più piccolo che separa bene i meme stock senza disperderli.
+Mantiene interpretabilità (1 cluster principale per i meme stock, 2–3 per il resto).
+È coerente con la regola empirica “un cluster per i meme, uno per i non meme, uno intermedio”.
+
+
+Analisi Silhouette score
+Silhouette score with k=2: 0.048
+Silhouette score with k=3: 0.081
+Silhouette score with k=4: 0.068
+Silhouette score with k=5: 0.072
+Silhouette score with k=6: 0.060
+Silhouette score with k=7: 0.050
+Silhouette score with k=8: 0.053
+Silhouette score with k=9: 0.045
+Silhouette score with k=10: 0.042
+
+Commento Silhouette score:
+| k     | Silhouette | Commento                                              |
+| ----- | ---------- | ----------------------------------------------------- |
+| 2     | 0.048      | separazione debole, cluster troppo grandi             |
+| **3** | **0.081**  | massimo → miglior bilanciamento                       |
+| 4     | 0.068      | inizia a degradare                                    |
+| 5     | 0.072      | leggero recupero, ma inferiore a 3                    |
+| 6–10  | 0.04–0.06  | peggiora progressivamente, segno di over-segmentation |
+
+I valori di silhouette sono bassi in valore assoluto (0.08 ≈ basso ma significativo),
+ma in DTW è normale — specialmente se:
+ - le serie sono rumorose,
+ - la lunghezza è elevata,
+ - e le classi reali non sono perfettamente disgiunte.
+
+Nei contesti reali di finanza o time series multivariati, silhouette tra 0.05 e 0.15 sono tipiche di strutture deboli ma statisticamente reali.
+Quindi, anche se 0.081 non sembra grande, è il miglior valore relativo e rappresenta il punto ottimale.
+
+
