@@ -14,7 +14,7 @@ load_dotenv( PATH / "keys.env" )
 API_KEY = os.getenv( "API_KEY_FMP_PREMIUM" )
 
 #scarico market cap giornaliera di tutti i (tickers)
-def get_mkt_cap( tickers, pause, output_name="mktcap_D.csv" ):
+def get_mkt_cap( tickers, output_name="mktcap_D.csv" ):
     output_path = DATA_PATH/output_name
 
     #carico tickers già scaricati
@@ -48,7 +48,7 @@ def get_mkt_cap( tickers, pause, output_name="mktcap_D.csv" ):
         except Exception as e:
             print(f"Errore per {ticker}: {e}")
 
-        time.sleep(pause)
+        time.sleep(PAUSE)
     
     if mkt_cap:
         final_df = pd.concat(mkt_cap, ignore_index=True)
@@ -61,7 +61,7 @@ def get_mkt_cap( tickers, pause, output_name="mktcap_D.csv" ):
         print("Nessun dato da salvare.")
 
 #scarico prezzi giornalieri di tutti i (tickers)
-def get_prices( tickers, pause, output_name="prices_D.csv" ):
+def get_prices( tickers, output_name="prices_D.csv" ):
     output_path = DATA_PATH/output_name
 
     #carico tickers già scaricati
@@ -94,7 +94,7 @@ def get_prices( tickers, pause, output_name="prices_D.csv" ):
         except Exception as e:
             print(f"Errore per {ticker}: {e}")
 
-        time.sleep(pause)
+        time.sleep(PAUSE)
     
     if prices:
         final_df = pd.concat(prices, ignore_index=True)
@@ -107,7 +107,7 @@ def get_prices( tickers, pause, output_name="prices_D.csv" ):
         print("Nessun dato da salvare.")
 
 
-def get_news(tickers, pause, start_date="2020-01-01", output_name="news_D.csv"):
+def get_news(tickers, start_date="2020-01-01", output_name="news_D.csv"):
    
     output_path = DATA_PATH / output_name
 
@@ -157,7 +157,7 @@ def get_news(tickers, pause, start_date="2020-01-01", output_name="news_D.csv"):
                     data.append(item)
             
             page += 1
-            time.sleep(pause)
+            time.sleep(PAUSE)
 
         if not data:
             print(f"Nessun dato per {ticker}")
@@ -177,7 +177,7 @@ def get_news(tickers, pause, start_date="2020-01-01", output_name="news_D.csv"):
             i+=1
 
 
-def get_company_names( tickers, pause, output_name="company_names.csv" ):
+def get_company_names( tickers, output_name="company_names.csv" ):
     
     output_path = DATA_PATH / output_name
 
@@ -208,7 +208,7 @@ def get_company_names( tickers, pause, output_name="company_names.csv" ):
         except Exception as e:
             print(f"Errore per {ticker}: {e}")
         
-        time.sleep( pause )
+        time.sleep( PAUSE )
         
     if all_data:
         final_df = pd.DataFrame(all_data)
@@ -225,6 +225,7 @@ def get_company_names( tickers, pause, output_name="company_names.csv" ):
 INDEX = "MS50"
 DATA_PATH = PATH/"data"/INDEX
 
+PAUSE = 60 / 300     #max 300 richieste al minuto
 BASE_URL = "https://financialmodelingprep.com/api/v3"
 
 if __name__ == "__main__":
@@ -232,19 +233,11 @@ if __name__ == "__main__":
     tickers_file_path = DATA_PATH / "tickers.csv"
     tickers = pd.read_csv(tickers_file_path)["ticker"].dropna().unique().tolist()
 
-    news_tickers = pd.read_csv( PATH/"data"/"R3000"/"news_volume_D.csv" )["ticker"].dropna().unique().tolist()
+    #get_mkt_cap( tickers )
 
-    tickers = [t for t in tickers if t not in news_tickers]
-
-    print(tickers)
-
-    pause = 60 / 300     #max 300 richieste al minuto
-
-    #get_mkt_cap( tickers, pause )
-
-    #get_prices( tickers, pause )
+    #get_prices( tickers )
     
-    get_news( tickers, pause )
+    get_news( tickers )
     
-    #get_company_names( tickers, pause )
+    #get_company_names( tickers )
 
