@@ -119,7 +119,7 @@ def clustering_stability_ari(X, n_clusters=3, n_bootstrap=5, sample_fraction=0.8
 
 
 def main():
-    # se true, run the cycle and fit with all cluster in [2,10]
+    #se true, fa il ciclo e fitta per tutti i cluster [2,10]
     fit_all = False
     #feature da usare
     features = ['close', 'd2c', 'shorts', 'volume', 'trend_score', 'news_volume', 'wiki_views']
@@ -136,7 +136,7 @@ def main():
     #Normalizzazione
     X = TimeSeriesScalerMeanVariance().fit_transform(X)
 
-    # Fit models
+    #Fit models
     if fit_all:
         for c in range(2, 11):
             print(f"Fitting model with n_clusters={c}")
@@ -218,12 +218,13 @@ def main():
     
 
     # Analisi con diversi numeri di cluster
-    print(f"Analysis with {n_clusters} clusters...")
+    print(f"Analisi con {n_clusters} clusters...")
     # carico modello
     model = get_cluster(X, n_clusters)
     labels = model.labels_
     
-    '''    # Stampo cluster prediction
+    '''
+    # Stampo cluster prediction
     for c in range(n_clusters):
         ticker_in_cluster = ticker[labels == c]
         print(f"Dimension of cluster {c+1}: {ticker_in_cluster.shape[0]}, "

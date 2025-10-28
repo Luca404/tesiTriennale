@@ -108,5 +108,4 @@ DATA_PATH = PATH/"data"/INDEX
 if __name__ == "__main__":
     tickers_file_path = DATA_PATH / "tickers_filtered.csv"
     tickers = pd.read_csv(tickers_file_path)["ticker"].dropna().unique().tolist()
-    tickers = tickers[:500]
     get_trends( tickers )
