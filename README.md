@@ -42,13 +42,14 @@ Periodo: 2020–2025
 - **extract_news_count.ipynb** - conta le news giornaliere per ogni ticker e salva in news_volume_D.csv
 - **get_short_positions.py** – scarica short interest e days-to-cover da FINRA
 - **clear_short_data.ipynb** - pulisce short_interest_raw.csv estraendo ticker, d2c, shorts e volume
-- **get_trends** - scarica dati di Google Trends con DataForSEO
-- **get_wiki_views** - scarica visualizzazioni delle pagine Wikipedia da Wikimedia
+- **get_trends.py** - scarica dati di Google Trends con DataForSEO
+- **get_wiki_views.py** - scarica visualizzazioni delle pagine Wikipedia da Wikimedia
 - **filter_tickers.ipynb** - filtra le stocks per capitalizzazione, volume e presenza di dati
 - **clustering.py** – applica il modello di clustering DTW  
 - **merge_data.ipynb** – unisce e pulisce i dataset  
 - **result.txt** – contiene i risultati del clustering per diversi k  
 - **/data/** – directory con i file CSV e i dataset intermedi
+- **/models/** – contiene i modelli di clustering già addestrati (file '.joblib')
 - **Luca_Botta_tesiTriennale.pdf** – testo completo della tesi 
 
 ## Sviluppi futuri
